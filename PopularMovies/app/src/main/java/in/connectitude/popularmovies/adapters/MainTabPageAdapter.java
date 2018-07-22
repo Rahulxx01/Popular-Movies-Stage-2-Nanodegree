@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import in.connectitude.popularmovies.ui.FavouriteMovieFragment;
 import in.connectitude.popularmovies.ui.PopularMoviesFragment;
 import in.connectitude.popularmovies.ui.TopRatedMoviesFragment;
 
@@ -25,6 +26,8 @@ public class MainTabPageAdapter extends FragmentPagerAdapter {
                 return new PopularMoviesFragment();
             case 1:
                 return new TopRatedMoviesFragment();
+            case 2:
+                return new FavouriteMovieFragment();
 
             default:
                 return null;
@@ -34,7 +37,7 @@ public class MainTabPageAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
 
@@ -46,6 +49,8 @@ public class MainTabPageAdapter extends FragmentPagerAdapter {
                 return "Popular";
             case 1:
                 return "Top Rated";
+            case 2:
+                return "Favourites";
             default:
                 return null;
         }

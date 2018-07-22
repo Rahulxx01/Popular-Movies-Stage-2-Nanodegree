@@ -114,9 +114,10 @@ public final class QueryUtils {
                 String movieReleaseDate = movieData.getString("release_date");
                 String moviePlotSynopsis = movieData.getString("overview");
                 String moviePosterPath = movieData.getString("poster_path");
+                String movieBackDropPath = movieData.getString("backdrop_path");
                 Double movieVoteAverage = movieData.getDouble("vote_average");
-                int movieID = movieData.getInt("id");
-                movies.add(new Movie(movieID, movieTitle, movieReleaseDate, moviePlotSynopsis, moviePosterPath, movieVoteAverage));
+                Long movieID = movieData.getLong("id");
+                movies.add(new Movie(movieID, movieTitle, movieReleaseDate, moviePlotSynopsis, moviePosterPath,movieBackDropPath, movieVoteAverage));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -124,27 +125,132 @@ public final class QueryUtils {
         return movies;
     }
 
-    private static List<Movie> extractMovieDetails(String movieJson) {
+
+    /////////////////
+
+    public static Movie fetchMovieDataDetails(String requestUrl) {
+        URL url = createUrl(requestUrl);
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Movie movies = extractMovieDetails(jsonResponse);
+        return movies;
+    }
+
+    private static Movie extractMovieDetails(String movieJson) {
         if (TextUtils.isEmpty(movieJson)) {
             return null;
         }
-        List<Movie> movies = new ArrayList<Movie>();
+        String genreString = "";
+        Movie movieDetails=null;
+       // List<Movie> movies = new ArrayList<Movie>();
         try {
             JSONObject root = new JSONObject(movieJson);
+            Long movieID = root.getLong("id");
+            String movieTitle = root.getString("original_title");
+            String movieReleaseDate = root.getString("release_date");
+            String moviePlotSynopsis = root.getString("overview");
+            String moviePosterPath = root.getString("poster_path");
+            String movieBackDropPath = root.getString("backdrop_path");
+            Double movieVoteAverage = root.getDouble("vote_average");
+            Long movieBudget = root.getLong("budget");
+            ArrayList<String> genreList = new ArrayList<String>();
+             Double voteCount = root.getDouble("vote_count");
+            Long movieRunTime = root.getLong("runtime");
+            String movieWebsite = root.getString("homepage");
+            Boolean censor = root.getBoolean("adult");
+            JSONArray genres = root.getJSONArray("genres");
+            for (int i = 0; i < genres.length(); i++) {
+                JSONObject movieData = genres.getJSONObject(i);
+                genreList.add(movieData.getString("name"));
+                genreString = genreString+"("+movieData.getString("name")+") ";
+            }
+
+
+           // movieDetails = new Movie(movieBudget,voteCount,movieRunTime,movieWebsite,genreList,censor);
+            movieDetails = new Movie(movieID,movieTitle,movieReleaseDate,moviePlotSynopsis,moviePosterPath,movieBackDropPath,movieVoteAverage,genreString,movieBudget,voteCount,movieRunTime,movieWebsite,censor);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return movieDetails;
+    }
+
+
+    private static List<Movie> extractMovieTrailer(String movieJson) {
+        if(TextUtils.isEmpty(movieJson)){
+            return null;
+        }
+        List<Movie> moviesData = new ArrayList<Movie>();
+        try{
+            JSONObject root = new JSONObject(movieJson);
             JSONArray results = root.getJSONArray("results");
-            for (int i = 0; i < results.length(); i++) {
+            for(int i=0;i<=results.length();i++){
                 JSONObject movieData = results.getJSONObject(i);
-                String movieTitle = movieData.getString("original_title");
-                String movieReleaseDate = movieData.getString("release_date");
-                String moviePlotSynopsis = movieData.getString("overview");
-                String moviePosterPath = movieData.getString("poster_path");
-                Double movieVoteAverage = movieData.getDouble("vote_average");
-                int movieID = movieData.getInt("id");
-                movies.add(new Movie(movieID, movieTitle, movieReleaseDate, moviePlotSynopsis, moviePosterPath, movieVoteAverage));
+                String key = movieData.getString("key");
+                String name = movieData.getString("name");
+                moviesData.add(new Movie(key,name));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return moviesData;
+    }
+
+
+
+    public static List<Movie> fetchTrailerData(String requestUrl) {
+        URL url = createUrl(requestUrl);
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<Movie> movies = extractMovieTrailer(jsonResponse);
         return movies;
     }
+
+
+    public static List<Movie> fetchReviewData(String requestUrl) {
+        URL url = createUrl(requestUrl);
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<Movie> movies = extractMovieReviews(jsonResponse);
+        return movies;
+    }
+
+
+    private static List<Movie> extractMovieReviews(String movieJson) {
+        if(TextUtils.isEmpty(movieJson)){
+            return null;
+        }
+        List<Movie> moviesData = new ArrayList<Movie>();
+        try{
+            JSONObject root = new JSONObject(movieJson);
+            JSONArray results = root.getJSONArray("results");
+            for(int i=0;i<=results.length();i++){
+                JSONObject movieData = results.getJSONObject(i);
+                String author = movieData.getString("author");
+                String content = movieData.getString("content");
+                String url = movieData.getString("url");
+                moviesData.add(new Movie(author,content,url));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return moviesData;
+    }
+
+
+
+
+
 }

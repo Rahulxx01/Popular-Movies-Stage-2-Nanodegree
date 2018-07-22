@@ -7,14 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import in.connectitude.popularmovies.R;
 import in.connectitude.popularmovies.entities.Movie;
 import in.connectitude.popularmovies.ui.MovieDetails;
@@ -27,6 +30,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieCardVie
 
     public ArrayList<Movie> mTheoryListItems;
 
+    public String favourites="null";
+
 
     Movie listItem;
 
@@ -36,7 +41,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieCardVie
         mContext = context;
         this.mListItems = mListItems;
 
+
     }
+
+    public MovieAdapter(Context context, List<Movie> mListItems,String favourites) {
+
+        mContext = context;
+        this.mListItems = mListItems;
+        this.favourites = favourites;
+
+    }
+
 
     @Override
     public MovieAdapter.MovieCardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -57,6 +72,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieCardVie
         Picasso.with(mContext).load(imagePosterLink).into(holder.movieImageView);
 
 
+
+
     }
 
     @Override
@@ -66,23 +83,32 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieCardVie
 
     public class MovieCardViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView title;
-        public ImageView movieImageView;
-        public LinearLayout mCardElement;
+        public @BindView(R.id.movie_Title)
+        TextView title;
+        public @BindView(R.id.movie_imageView)
+        ImageView movieImageView;
+
 
         public MovieCardViewHolder(final View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.movie_Title);
-            movieImageView = (ImageView) itemView.findViewById(R.id.movie_imageView);
-
-
+            ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Context context = view.getContext();
                     int position = getAdapterPosition();
                     Intent intent = new Intent(view.getContext(), MovieDetails.class);
-                   // intent.putExtra("link",mListItems.get(position).getmTheoryLink());
+                    intent.putExtra("movie_title", mListItems.get(position).getmMovieTitle());
+                    intent.putExtra("movie_poster_path", mListItems.get(position).getmMoviePosterPath());
+                    intent.putExtra("movie_backdropImage_path", mListItems.get(position).getmMovieBackDropPath());
+                    intent.putExtra("movie_synopsis", mListItems.get(position).getmMoviePlotSynopsis());
+                    intent.putExtra("movie_rating", mListItems.get(position).getmMovieVoteAverage().toString());
+                    intent.putExtra("movie_releaseDate", mListItems.get(position).getmMovieReleaseDate());
+                    intent.putExtra("movie_id", mListItems.get(position).getmMovieId().toString());
+
+                    if(!favourites.equals("null")){
+                        intent.putExtra("favourites", favourites);
+                    }
                     context.startActivity(intent);
 
                 }

@@ -6,4 +6,5 @@
     <color name="grayCardViewColor">#424242</color>
     <color name="white">#FFFFFF</color>
     <color name="lightGray">#8000</color>
+    <color name="light_blue">#80DEEA</color>
 </resources>

@@ -8,4 +8,12 @@ public class Constants {
     public static final String MOVIE_DETAIlS = "https://api.themoviedb.org/3/movie/{movie_id}?api_key=403aab985eeaff498624b420c392e97c";
     String MOVIE_REVIEW_URL = "https://api.themoviedb.org/3/movie/[movieId]/reviews?api_key=403aab985eeaff498624b420c392e97c";
     String MOVIE_VIDEOS_URL = "https://api.themoviedb.org/3/movie/[movieId]/videos?api_key=403aab985eeaff498624b420c392e97c";
+
+    public static final String BASE_URL = "https://api.themoviedb.org/3/movie/";
+    public static final String API_KEY_DETAILS = "?api_key=403aab985eeaff498624b420c392e97c";
+    public static final String API_TRAILER_KEY_DETAILS = "/videos?api_key=403aab985eeaff498624b420c392e97c";
+    public static final String API_REVIEW_KEY_DETAILS = "/reviews?api_key=403aab985eeaff498624b420c392e97c";
+
+
+
 }

@@ -11,11 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import in.connectitude.popularmovies.R;
 import in.connectitude.popularmovies.adapters.MovieAdapter;
 import in.connectitude.popularmovies.entities.Constants;
@@ -24,11 +28,21 @@ import in.connectitude.popularmovies.utils.QueryUtils;
 
 
 public class PopularMoviesFragment extends Fragment {
+
+
+    @BindView(R.id.popularMovies_ProgressBar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.popularMovies_recyclerView)
+    RecyclerView mMovieRecyclerView;
+    @BindView(R.id.swipe_refresh_layout_popularMovies)
+    SwipeRefreshLayout mSwipeRefresh;
+    @BindView(R.id.reload_PopularMoview)
+    ImageView reloadPopularMovies;
+    @BindView(R.id.noInternetConnectionPopular)
+    TextView noInternetConnectionTextView;
     public List<Movie> movieList;
     MovieAdapter movieAdapter;
-    public SwipeRefreshLayout mSwipeRefresh;
-    RecyclerView mMovieRecyclerView;
-    ProgressBar mProgressBar;
+
 
     public PopularMoviesFragment() {
         // Required empty public constructor
@@ -39,22 +53,38 @@ public class PopularMoviesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_popular_movies, container, false);
-        mMovieRecyclerView = rootView.findViewById(R.id.popularMovies_recyclerView);
-        mProgressBar = (ProgressBar) rootView.findViewById(R.id.popularMovies_ProgressBar);
+        ButterKnife.bind(this, rootView);
+        // mMovieRecyclerView = rootView.findViewById(R.id.popularMovies_recyclerView);
+        //mProgressBar = (ProgressBar) rootView.findViewById(R.id.popularMovies_ProgressBar);
 
 
         if (checkInternetConnectivity()) {
-
+            reloadPopularMovies.setVisibility(View.GONE);
+            noInternetConnectionTextView.setVisibility(View.GONE);
             new MovieAsynTask().execute();
 
         } else {
             mProgressBar.setVisibility(View.GONE);
+
             Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
         }
+
+
+        reloadPopularMovies.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(checkInternetConnectivity()){
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    new MovieAsynTask().execute();
+                }else{
+                    Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
         mMovieRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
 
-        mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout_popularMovies);
+        //  mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout_popularMovies);
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -88,10 +118,13 @@ public class PopularMoviesFragment extends Fragment {
 
                 mMovieRecyclerView.setAdapter(movieAdapter);
                 mProgressBar.setVisibility(View.GONE);
+                mSwipeRefresh.setVisibility(View.GONE);
+                reloadPopularMovies.setVisibility(View.GONE);
+                noInternetConnectionTextView.setVisibility(View.GONE);
 
 
             } else {
-                Toast.makeText(getContext(), "Something Went Wrong in the Server", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(), "Something Went Wrong in the Server", Toast.LENGTH_LONG).show();
             }
         }
 

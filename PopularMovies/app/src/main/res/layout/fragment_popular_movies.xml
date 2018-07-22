@@ -2,8 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/colorPrimary"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".ui.PopularMoviesFragment">
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -11,14 +11,43 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/popularMovies_recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </android.support.v7.widget.RecyclerView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/popularMovies_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/reload_PopularMoview"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_reload" />
+
+
+        <TextView
+            android:id="@+id/noInternetConnectionPopular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No Internet Connections"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="@color/white" />
+
+
+    </LinearLayout>
+
 
     <ProgressBar
         android:id="@+id/popularMovies_ProgressBar"

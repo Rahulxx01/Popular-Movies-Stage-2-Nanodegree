@@ -11,11 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import in.connectitude.popularmovies.R;
 import in.connectitude.popularmovies.adapters.MovieAdapter;
 import in.connectitude.popularmovies.entities.Constants;
@@ -25,12 +29,20 @@ import in.connectitude.popularmovies.utils.QueryUtils;
 
 public class TopRatedMoviesFragment extends Fragment {
 
+    @BindView(R.id.topRatedMovies_ProgressBar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.topRatedMovies_recyclerView)
+    RecyclerView mMovieRecyclerView;
+    @BindView(R.id.swipe_refresh_layout_topRatedMovies)
+    SwipeRefreshLayout mSwipeRefresh;
+
+    @BindView(R.id.reload_TopRated)
+    ImageView reloadPopularMovies;
+    @BindView(R.id.noInternetConnectionTopRated)
+    TextView noInternetConnectionTextView;
+
     public List<Movie> movieList;
     MovieAdapter movieAdapter;
-    public SwipeRefreshLayout mSwipeRefresh;
-    RecyclerView mMovieRecyclerView;
-
-    ProgressBar mProgressBar;
 
 
     public TopRatedMoviesFragment() {
@@ -42,21 +54,36 @@ public class TopRatedMoviesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_top_rated_movies, container, false);
-        mMovieRecyclerView = rootView.findViewById(R.id.topRatedMovies_recyclerView);
-        mProgressBar = (ProgressBar) rootView.findViewById(R.id.topRatedMovies_ProgressBar);
+        ButterKnife.bind(this, rootView);
+        //mMovieRecyclerView = rootView.findViewById(R.id.topRatedMovies_recyclerView);
+        //mProgressBar = (ProgressBar) rootView.findViewById(R.id.topRatedMovies_ProgressBar);
 
 
         if (checkInternetConnectivity()) {
-
+            reloadPopularMovies.setVisibility(View.GONE);
+            noInternetConnectionTextView.setVisibility(View.GONE);
             new MovieAsynTask().execute();
 
         } else {
             mProgressBar.setVisibility(View.GONE);
             Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
         }
+
+        reloadPopularMovies.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkInternetConnectivity()) {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    new MovieAsynTask().execute();
+                } else {
+                    Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         mMovieRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-        mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout_topRatedMovies);
+        // mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout_topRatedMovies);
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -90,9 +117,12 @@ public class TopRatedMoviesFragment extends Fragment {
 
                 mMovieRecyclerView.setAdapter(movieAdapter);
                 mProgressBar.setVisibility(View.GONE);
+                mSwipeRefresh.setVisibility(View.GONE);
+                reloadPopularMovies.setVisibility(View.GONE);
+                noInternetConnectionTextView.setVisibility(View.GONE);
 
             } else {
-                Toast.makeText(getContext(), "Something Went Wrong in the Server", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(), "Something Went Wrong in the Server", Toast.LENGTH_LONG).show();
             }
         }
 
