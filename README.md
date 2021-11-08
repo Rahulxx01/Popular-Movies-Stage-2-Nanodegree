@@ -1,5 +1,8 @@
 # Popular-Movies-Stage-2-Nanodegree
 
+Check rubric for given requirments to be implemented : 
+https://review.udacity.com/#!/rubrics/66/view
+
 
 User can do following functionalities.
 
